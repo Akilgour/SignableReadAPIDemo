@@ -35,8 +35,8 @@ namespace SignableReadAPIDemo
 
                         using (WebClient client = new WebClient())
                         {
-                            client.DownloadFile(envelope.envelope_signed_pdf,
-                                                @"D:\Ashley\Desktop\" + envelope.envelope_fingerprint + ".pdf");
+
+                            client.DownloadFile(envelope.envelope_signed_pdf, string.Format(@"D:\Ashley\Desktop\{0}.pdf", envelope.envelope_fingerprint));
                         }
 
                     }
