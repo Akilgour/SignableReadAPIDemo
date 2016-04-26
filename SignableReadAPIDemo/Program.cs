@@ -11,6 +11,7 @@ namespace SignableReadAPIDemo
     class Program
     {
         static string getListEnvelopes = "https://api.signable.co.uk/v1/envelopes?offset={0}&limit={1}";
+        static int recordsPerPage = 5;
 
         static void Main(string[] args)
         {
@@ -18,7 +19,6 @@ namespace SignableReadAPIDemo
             string apiKey = Console.ReadLine();
             var webClient = CreateWebClient(apiKey);
             JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-            int recordsPerPage = 5;
             string rootJSON;
 
             Rootobject root = new Rootobject() { next = string.Format(getListEnvelopes, 0, recordsPerPage) };
