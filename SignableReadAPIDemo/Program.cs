@@ -21,7 +21,7 @@ namespace SignableReadAPIDemo
             int recordsPerPage = 5;
             var envelopeFingerprints = new List<Guid>();
             string rootJSON;
-            
+
             Rootobject root = new Rootobject() { next = string.Format(getListEnvelopes, 0, recordsPerPage) };
             do
             {
@@ -32,6 +32,13 @@ namespace SignableReadAPIDemo
                     if (envelope.envelope_status == "signed")
                     {
                         envelopeFingerprints.Add(new Guid(envelope.envelope_fingerprint));
+
+                        using (WebClient client = new WebClient())
+                        {
+                            client.DownloadFile(envelope.envelope_signed_pdf,
+                                                @"D:\Ashley\Desktop\" + envelope.envelope_fingerprint + ".pdf");
+                        }
+
                     }
                 }
             } while (root.next != null);
