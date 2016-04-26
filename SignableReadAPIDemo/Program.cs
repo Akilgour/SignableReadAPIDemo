@@ -10,38 +10,32 @@ namespace SignableReadAPIDemo
 {
     class Program
     {
-        static string getEnvelopesHeaders = "https://api.signable.co.uk/v1/envelopes?offset=1&limit=1";
         static string getListEnvelopes = "https://api.signable.co.uk/v1/envelopes?offset={0}&limit={1}";
 
         static void Main(string[] args)
         {
             Console.WriteLine("Enter your API Key from  https://app.signable.co.uk/api");
-            string apiKey = "99b18594ed0144188a0efe109043702a";//Console.ReadLine();
-
+            string apiKey = Console.ReadLine();
             var webClient = CreateWebClient(apiKey);
-
-            var envelopesHeaderJSON = GetDetail(webClient, getEnvelopesHeaders);
-
             JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
-            Rootobject envelopesHeader = javaScriptSerializer.Deserialize<Rootobject>(envelopesHeaderJSON);
-
             int recordsPerPage = 5;
-            int pageCount = (int.Parse(envelopesHeader.total_envelopes) + recordsPerPage - 1) / recordsPerPage;
-
             var envelopeFingerprints = new List<Guid>();
             string rootJSON;
-             
-            for (int i = 0; i < pageCount; i++)
+            
+            Rootobject root = new Rootobject() { next = string.Format(getListEnvelopes, 0, recordsPerPage) };
+            do
             {
-                rootJSON = GetDetail(webClient, string.Format(getListEnvelopes, i * recordsPerPage, recordsPerPage));
-                Rootobject root = javaScriptSerializer.Deserialize<Rootobject>(rootJSON);
+                rootJSON = GetDetail(webClient, root.next);
+                root = javaScriptSerializer.Deserialize<Rootobject>(rootJSON);
                 foreach (var envelope in root.envelopes)
                 {
-                    envelopeFingerprints.Add(new Guid(envelope.envelope_fingerprint));
+                    if (envelope.envelope_status == "signed")
+                    {
+                        envelopeFingerprints.Add(new Guid(envelope.envelope_fingerprint));
+                    }
                 }
-            }
+            } while (root.next != null);
 
-             
         }
 
         private static WebClient CreateWebClient(string apiKey)
@@ -57,9 +51,6 @@ namespace SignableReadAPIDemo
         private static string GetDetail(WebClient webClient, string apiCommand)
         {
             var results = webClient.DownloadString(apiCommand);
-            //Console.WriteLine(results);
-            Console.WriteLine("Press any key to continue ...");
-            Console.ReadLine();
             return results;
         }
     }
@@ -85,6 +76,7 @@ namespace SignableReadAPIDemo
         public DateTime envelope_created { get; set; }
         public DateTime envelope_sent { get; set; }
         public object envelope_processed { get; set; }
+        public string envelope_signed_pdf { get; set; }
     }
 
 
