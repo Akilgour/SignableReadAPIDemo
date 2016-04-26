@@ -19,7 +19,6 @@ namespace SignableReadAPIDemo
             var webClient = CreateWebClient(apiKey);
             JavaScriptSerializer javaScriptSerializer = new JavaScriptSerializer();
             int recordsPerPage = 5;
-            var envelopeFingerprints = new List<Guid>();
             string rootJSON;
 
             Rootobject root = new Rootobject() { next = string.Format(getListEnvelopes, 0, recordsPerPage) };
@@ -31,8 +30,6 @@ namespace SignableReadAPIDemo
                 {
                     if (envelope.envelope_status == "signed")
                     {
-                        envelopeFingerprints.Add(new Guid(envelope.envelope_fingerprint));
-
                         using (WebClient client = new WebClient())
                         {
 
