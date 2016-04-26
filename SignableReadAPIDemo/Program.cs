@@ -15,6 +15,8 @@ namespace SignableReadAPIDemo
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Start");
+
             Console.WriteLine("Enter your API Key from  https://app.signable.co.uk/api");
             string apiKey = Console.ReadLine();
             var webClient = CreateWebClient(apiKey);
@@ -33,6 +35,9 @@ namespace SignableReadAPIDemo
                 }
             } while (root.next != null);
 
+            Console.WriteLine("End");
+            Console.WriteLine("Press any key to end ...");
+            Console.ReadLine();
         }
 
         private static WebClient CreateWebClient(string apiKey)
