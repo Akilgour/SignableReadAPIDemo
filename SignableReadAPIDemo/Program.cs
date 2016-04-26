@@ -26,16 +26,12 @@ namespace SignableReadAPIDemo
             {
                 rootJSON = GetDetail(webClient, root.next);
                 root = javaScriptSerializer.Deserialize<Rootobject>(rootJSON);
-                foreach (var envelope in root.envelopes)
+                foreach (var envelope in root.envelopes.Where(x => x.envelope_status == "signed"))
                 {
-                    if (envelope.envelope_status == "signed")
+                    using (WebClient client = new WebClient())
                     {
-                        using (WebClient client = new WebClient())
-                        {
 
-                            client.DownloadFile(envelope.envelope_signed_pdf, string.Format(@"D:\Ashley\Desktop\{0}.pdf", envelope.envelope_fingerprint));
-                        }
-
+                        client.DownloadFile(envelope.envelope_signed_pdf, string.Format(@"D:\Ashley\Desktop\{0}.pdf", envelope.envelope_fingerprint));
                     }
                 }
             } while (root.next != null);
